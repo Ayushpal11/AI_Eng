@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f6f9">
+  <title>AI Engineering Course</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #f4f6f9; }
+    #course { display: block; width: 100%; height: 100%; border: 0; background: transparent; }
+  </style>
+</head>
+<body>
+  <iframe id="course" title="AI Engineering Course" src="AI%20Engineering%20Course.html"></iframe>
+  <script>
+    (() => {
+      const frame = document.getElementById('course');
+      const key = 'ai-eng-display-theme';
+      const icons = {
+        light: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>',
+        dark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z"/></svg>'
+      };
+
+      function enhance() {
+        const doc = frame.contentDocument;
+        if (!doc || !doc.querySelector('.top')) return;
+
+        let style = doc.getElementById('display-enhancements');
+        if (!style) {
+          style = doc.createElement('style');
+          style.id = 'display-enhancements';
+          style.textContent = `
+            :root { color-scheme: light; }
+            :root[data-theme="dark"] { color-scheme: dark; }
+            html { scroll-behavior: smooth; }
+            body, .top, .rail, .step, .st, .chip, .opt, .btn, .les, .face, .cmp section, .explain, .soc textarea {
+              transition: background-color .24s ease, color .24s ease, border-color .24s ease, box-shadow .24s ease;
+            }
+            .top { gap: clamp(8px, 1.5vw, 16px); }
+            .display-toggle {
+              flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+              min-height: 40px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px;
+              background: var(--paper); color: var(--ink); cursor: pointer; font: 500 .82rem/1 var(--display);
+              box-shadow: 0 2px 8px color-mix(in oklab, var(--ink) 7%, transparent);
+            }
+            .display-toggle:hover { border-color: var(--acc); transform: translateY(-1px); }
+            .display-toggle:active { transform: translateY(0); }
+            .display-toggle svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+            .display-toggle:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+            .step { box-shadow: 0 8px 28px color-mix(in oklab, var(--ink) 5%, transparent); }
+            .les, .st, .chip, .btn, .opt { transition: transform .16s ease, background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease; }
+            .les:hover, .st:hover:not(:disabled), .chip:not(.ext):hover, .btn:hover:not(:disabled), .opt:hover:not(:disabled) { transform: translateY(-1px); }
+            @media (max-width: 900px) {
+              .display-toggle { min-height: 36px; padding: 7px 10px; font-size: .76rem; }
+              .display-toggle .toggle-label { display: none; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+              html { scroll-behavior: auto; }
+              *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+            }
+          `;
+          doc.head.appendChild(style);
+        }
+
+        const header = doc.querySelector('.top');
+        let button = doc.getElementById('display-toggle');
+        if (!button) {
+          button = doc.createElement('button');
+          button.id = 'display-toggle';
+          button.className = 'display-toggle';
+          button.type = 'button';
+          button.innerHTML = '<span class="toggle-icon"></span><span class="toggle-label">Dark mode</span>';
+          button.addEventListener('click', () => {
+            const next = doc.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+            doc.documentElement.dataset.theme = next;
+            try { localStorage.setItem(key, next); } catch (_) {}
+            updateButton();
+          });
+          header.appendChild(button);
+        }
+
+        function updateButton() {
+          const dark = doc.documentElement.dataset.theme === 'dark';
+          button.querySelector('.toggle-icon').innerHTML = icons[dark ? 'light' : 'dark'];
+          button.querySelector('.toggle-label').textContent = dark ? 'Light mode' : 'Dark mode';
+          button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+          button.setAttribute('aria-pressed', String(dark));
+          button.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+        }
+
+        let saved;
+        try { saved = localStorage.getItem(key); } catch (_) {}
+        if (saved === 'light' || saved === 'dark') doc.documentElement.dataset.theme = saved;
+        else if (!doc.documentElement.dataset.theme) {
+          doc.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        updateButton();
+      }
+
+      frame.addEventListener('load', enhance);
+    })();
+  </script>
+</body>
+</html>
