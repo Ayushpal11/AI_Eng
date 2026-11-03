@@ -30,7 +30,8 @@ jobs:
       - name: Prepare course site
         run: |
           mkdir -p _site
-          cp "AI Engineering Course.html" _site/index.html
+          cp "AI Engineering Course.html" _site/
+          cp index.html _site/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
